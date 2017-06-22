@@ -49,29 +49,33 @@ module.exports = function(opts) {
   // (opts.out will be replaced by a callback function later)
   var stream = es.pause();
   var filename = opts.out;
-  var output = null;
+  //var output = null;
   var sourceMapOutput = null;
 
   // Set .out to a function to catch result text and sourcemap.
-  opts.out = function(text, sourceMap) {
-    output = text;
-    sourceMapOutput = sourceMap;
-  };
+  //opts.out = function(text, sourceMap) {
+  //  output = text;
+  //  sourceMapOutput = sourceMap;
+  //};
 
   var success = function(buildResponse) {
-    stream.write(createFile(filename, output, buildResponse, sourceMapOutput));
+    //stream.write(createFile(filename, output, buildResponse, sourceMapOutput));
     stream.resume();
     stream.end();
   };
   var error = function(error) {
+    console.log(error);
     stream.emit('error', new PluginError(PLUGIN_NAME, error));
+    stream.resume();
+    stream.end();
   };
 
   // just a small wrapper around the r.js optimizer, we write a new gutil.File
   // (vinyl) to the Stream, mocking a file, which can be handled
   // regular gulp plugins.
+  
   requirejs.optimize(opts, success, error);
-
+  
   // return the stream for chain .pipe()ing
   return stream;
 };
